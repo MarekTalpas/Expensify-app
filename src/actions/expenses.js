@@ -36,3 +36,27 @@ export const removeExpense = ({id} = {}) => ({type: 'REMOVE_EXPENSE', id});
 
 // EDIT_EXPENSE
 export const editExpense = (id, updates) => ({type: 'EDIT_EXPENSE', id, updates});
+
+export const setExpenses = (expenses) => ({
+  type: 'SET_EXPENSES',
+  expenses
+});
+
+export const startSetExpenses = () => {
+  return dispatch => {
+    return database.ref('expenses').once('value').then(expenses => {
+      const expensesData = [];
+
+      expenses.forEach(expense => {
+        expensesData.push({
+          id: expense.key,
+          ...expense.val()
+        });
+      });
+
+      console.log('data: ', expensesData);
+
+      dispatch(setExpenses(expensesData));
+    });
+  };
+};
